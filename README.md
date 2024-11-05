@@ -154,7 +154,7 @@ step3.res1 <- mvmr.cml.susie.step3(step2.res1$mvdat1, invalid.idx, step2.res1$th
 step3.res2 <- mvmr.cml.susie.step3(step2.res2$mvdat2, invalid.idx, step2.res2$theta.vec2, rho.mat)
 ```
 
-Finally, the IMS step can be run using the initial value provided. We can identify the significant exposures checking if the row sum of the PIP matrix is greater than 1/157:
+Finally, the IMS step can be run using the initial value provided. We can identify the significant exposures checking if the row sum of the PIP matrix (row corresponding to an exposure) is greater than 1/157:
 ```
 idx <- which(rowSums(res) > 1/157)
 ```
