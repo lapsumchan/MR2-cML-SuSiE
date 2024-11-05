@@ -137,6 +137,13 @@ Again, the harmonized MR2 data (together with correct AD sample size information
 ```
 mr2dat <- readRDS("mr2dat.RDS")
 ```
+With this, we can run step 2 of MR2-cML-SuSiE:
+```
+step2.res1 <- mr2.cml.susie.step2(mr2dat, 1)
+step2.res2 <- mr2.cml.susie.step2(mr2dat, 2)
+```
+which is also designed to be run on a per trait basis.
+
 ### References
 
 [1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
