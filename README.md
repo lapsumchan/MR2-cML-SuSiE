@@ -129,8 +129,14 @@ Now, we can use the `harmonize.mr2.data` function created for obtaining harmoniz
 ```
 mr2dat <- harmonize.mr2.data(exposure.ids.subset, outcome.id.list, sample.sizes.subset)
 ```
-which in this case, provides two harmonized dataset `mr2dat$mvdat.list[[1]]` (for AD) and mr2dat$mvdat.list[[2]] (for HTN), as well as the sample sizes for both exposures (`mr2dat$exposure.sample.sizes`) and outcomes (`mr2dat$outcome.sample.sizes`).
-
+which in this case, provides two harmonized dataset `mr2dat$mvdat.list[[1]]` (for AD) and mr2dat$mvdat.list[[2]] (for HTN), as well as the sample sizes for both exposures (`mr2dat$exposure.sample.sizes`) and outcomes (`mr2dat$outcome.sample.sizes`). Notice that the correct AD sample size is 487511 (OpenGWAS apparently stores the wrong sample size 85934 for this particular dataset). Thus, we need to manually modify the harmonized data:
+```
+mr2dat$outcome.sample.sizes[1] <- 487511
+```
+Again, the harmonized MR2 data (together with correct AD sample size information) has been provided for convenience:
+```
+mr2dat <- readRDS("mr2dat.RDS")
+```
 ### References
 
 [1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
