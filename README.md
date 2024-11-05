@@ -142,7 +142,17 @@ With this, we can run step 2 of MR2-cML-SuSiE:
 step2.res1 <- mr2.cml.susie.step2(mr2dat, 1)
 step2.res2 <- mr2.cml.susie.step2(mr2dat, 2)
 ```
-which is also designed to be run on a per trait basis.
+which is also designed to be run on a per trait basis. Upon finish running, this provides `invalid.idx1` (from `step2.res1`) and `invalid.idx2` (from `step2.res2`), i.e., the instrumental variables (IVs) deemed invalid using UVMR-cML for the corresponding outcomes. We can obtain an overall set of invalid IVs by taking the union:
+```
+invalid.idx <- sort(unique(c(invalid.idx1, invalid.idx2)))
+```
+Using this set of invalid IVs, we can obtain better initial value estimates for the IMS step (step 4) via MVMR-cML-SuSiE in step 3. Notice that we also need `rho.mat` (the genetic correlation matrix between exposures and outcomes) in step 3 (more details can be found [here](https://github.com/lapsumchan/MVMR-cML-SuSiE), and this has been provided:
+```
+rho.mat <- readRDS("metdrho.RDS")
+
+step3.res1 <- mvmr.cml.susie.step3(step2.res1$mvdat1, invalid.idx, step2.res1$theta.vec1, rho.mat)
+step3.res2 <- mvmr.cml.susie.step3(step2.res2$mvdat2, invalid.idx, step2.res2$theta.vec2, rho.mat)
+```
 
 ### References
 
