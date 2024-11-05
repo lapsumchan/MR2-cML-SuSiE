@@ -154,6 +154,28 @@ step3.res1 <- mvmr.cml.susie.step3(step2.res1$mvdat1, invalid.idx, step2.res1$th
 step3.res2 <- mvmr.cml.susie.step3(step2.res2$mvdat2, invalid.idx, step2.res2$theta.vec2, rho.mat)
 ```
 
+Finally, the IMS step can be run using the initial value provided. We can identify the significant exposures checking if the row sum of the PIP matrix is greater than 1/157:
+```
+idx <- which(rowSums(res) > 1/157)
+```
+and the significant exposure set is given by `res[idx,]` which looks like:
+```
+> head(res[idx,])
+                          AD         HTN      AD_HTN
+met-d-IDL_TG    0.0001776506 0.002272474 0.007515827
+met-d-L_VLDL_C  0.0001741017 0.003004226 0.009922033
+met-d-L_VLDL_FC 0.0001464217 0.004703768 0.013175401
+met-d-L_VLDL_L  0.0001352467 0.005774971 0.014877285
+met-d-L_VLDL_P  0.0001412142 0.005913658 0.016024885
+met-d-L_VLDL_PL 0.0001411858 0.005783453 0.015657510
+```
+Note that by checking column sum of this submatrix, we also can learn which one is the most likely configuration:
+```
+> colSums(res[idx,])
+         AD         HTN      AD_HTN 
+0.005055941 0.250410900 0.535365874
+```
+This indicates that this set of 52 metabolite exposures are more likely to be causal to both AD and HTN, than HTN alone. 
 ### References
 
 [1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
