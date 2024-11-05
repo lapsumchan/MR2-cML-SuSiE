@@ -58,16 +58,16 @@ exposure.ids <- ao$id[metd.idx]
 exposure.ids <- sort(exposure.ids)
 ```
 
-The AD GWAS summary statistics comes from the largest AD cohort by Bellenguez et al.<sup>[3]</sup>, which is available in [OpenGWAS](https://gwas.mrcieu.ac.uk/datasets/ebi-a-GCST90027158/). The corresponding ID:
+The AD GWAS summary statistics comes from the largest AD cohort by Bellenguez et al.<sup>[3]</sup>, which is available in OpenGWAS with the corresponding ID:
 ```
 outcome.id1 <- "ebi-a-GCST90027158"
 ```
-while the CAD GWAS summary statistics comes from van der Harst et al.<sup>[4]</sup>, which is available in [OpenGWAS](https://gwas.mrcieu.ac.uk/datasets/ebi-a-GCST005195/) and the corresponding ID is:
+while the CAD GWAS summary statistics comes from van der Harst et al.<sup>[4]</sup>, which is also available in OpenGWAS:
 ```
 outcome.id2 <- "ebi-a-GCST005195"
 ```
 
-Notice that we need the minimum sample size amongst GWASs (exposure + outcome) for cML. Thus, we need to prepare a vector of sample sizes corresponding to each exposures in `sample.sizes`. This has been prepared in the file `metdn.RDS` so we just need to load it:
+Notice that we need the minimum sample size amongst GWASs (exposure + outcomes) for cML. Thus, we need to prepare a vector of sample sizes corresponding to each exposures in `sample.sizes`. This has been prepared in the file `metdn.RDS` so we just need to load it:
 ```
 sample.sizes <- readRDS("metdn.RDS")
 ```
