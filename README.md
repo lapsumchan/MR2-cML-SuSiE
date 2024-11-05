@@ -26,3 +26,21 @@ First, we need to install a few dependencies [`TwoSampleMR`](https://mrcieu.gith
     devtools::install_github("xue-hr/MRcML")
     devtools::install_github("ZhaotongL/MVMR-cML")
     devtools::install_github("borangao/MESuSiE")
+
+# Demo
+
+We first load all the source code dependencies:
+
+```
+library(TwoSampleMR)
+library(susieR)
+library(MRcML)
+library(MVMRcML)
+library(MESuSiE)
+```
+
+and the source code containing all the main functions:
+
+```
+source("main.R")
+```
