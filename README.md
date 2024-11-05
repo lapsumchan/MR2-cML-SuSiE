@@ -72,7 +72,7 @@ Notice that we need the minimum sample size amongst GWASs (exposure + outcomes) 
 sample.sizes <- readRDS("metdn.RDS")
 ```
 
-With the above four `R` objects (`exposure.ids`, `outcome.id1`, `outcome.id2` and `sample.sizes`), we are ready to run step 1 of MR2-cML-SuSiE. The function is designed such that it can be run by trait, and each run would subsequently provide a vector of *p*-values for all 249 metabolite exposures for a given trait:
+With the above four `R` objects (`exposure.ids`, `outcome.id1`, `outcome.id2` and `sample.sizes`), we are ready to run step 1 of MR2-cML-SuSiE. The function is designed such that it can be run by each trait, and each run would subsequently provide a vector of *p*-values for all 249 metabolite exposures for a given trait:
 
 ```
 step1.res1 <- mv.cml.susie.step1(exposure.ids, outcome.id1, sample.sizes)
@@ -94,6 +94,22 @@ step1.res1 <- readRDS("step1res1.RDS")
 step1.res2 <- readRDS("step1res2.RDS")
 ```
 
+Next, we create a list of p-values according to the number of traits analyzed:
+```
+step1.res.list <- vector("list", length = 2)
+step1.res.list[[1]] <- step1.res1
+step1.res.list[[2]] <- step1.res2
+```
+and use the function `identify.exposure.subset.idx` to identify the indices corresponding to the exposures that are worth further investigation:
+```
+subset.idx <- identify.exposure.subset.idx(step1.res.list)
+```
+which should suggest
+```
+length(subset.idx)
+[1] 157
+```
+meaning 157 exposures will be jointly analyzed in the subsequent steps.
 ### References
 
 [1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
