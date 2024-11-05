@@ -88,6 +88,12 @@ head(step1.res2)
 [1] 1.613439e-01 5.540860e-01 4.398653e-01 5.708226e-07 1.430179e-01 6.191650e-02
 ```
 
+Since it can take a while to run UVMR-cML on 249 metabolites for both traits, the end results of this step are provided in this Github for convenience and can be loaded using:
+```
+step1.res1 <- readRDS("step1res1.RDS")
+step1.res2 <- readRDS("step1res2.RDS")
+```
+
 ### References
 
 [1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
