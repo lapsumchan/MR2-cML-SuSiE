@@ -119,6 +119,17 @@ and correspondingly, we can also obtain the sample sizes for the 157 exposures u
 ```
 sample.sizes.subset <- sample.sizes[subset.idx]
 ```
+In addition, we need to prepare the list of outcome IDs in a list format:
+```
+outcome.id.list <- vector("list", length = 2)
+outcome.id.list[[1]] <- outcome.id1
+outcome.id.list[[2]] <- outcome.id2
+```
+Now, we can use the `harmonize.mr2.data` function created for obtaining harmonized data appropriate for multi-response Mendelian randomization (MR2) analysis from OpenGWAS:
+```
+mr2dat <- harmonize.mr2.data(exposure.ids.subset, outcome.id.list, sample.sizes.subset)
+```
+which in this case, provides two harmonized dataset `mr2dat$mvdat.list[[1]]` (for AD) and mr2dat$mvdat.list[[2]] (for HTN), as well as the sample sizes for both exposures (`mr2dat$exposure.sample.sizes`) and outcomes (`mr2dat$outcome.sample.sizes`).
 
 ### References
 
