@@ -109,13 +109,13 @@ which should suggest
 length(subset.idx)
 [1] 157
 ```
-This means that 157 exposures will be jointly analyzed in the subsequent steps. Notice that the default used for screening is Bonferroni correction (0.05 divided by the product of number of trait and the number of exposures). Change the `cutoff` argument if you want to use something different. In this case, the cutoff is 0.05 / (2 x 249) ~ 1e-4.
+This means that 157 exposures will be jointly analyzed in the subsequent steps. Notice that the default used for screening is Bonferroni correction (0.05 divided by the product of number of traits and the number of exposures). Change the `cutoff` argument if you want to use something different. In this case, `cutoff` is 0.05 / (2 x 249) ~ 1e-4.
 
 With this, we can extract the exposures which we wish to further investigate:
 ```
 exposure.ids.subset <- exposure.ids[subset.idx]
 ```
-Correspondingly, we can also obtain the sample sizes corresponding to the 157 exposures using:
+and correspondingly, we can also obtain the sample sizes for the 157 exposures using:
 ```
 sample.sizes.subset <- sample.sizes[subset.idx]
 ```
