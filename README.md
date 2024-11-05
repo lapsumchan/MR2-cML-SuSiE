@@ -82,8 +82,10 @@ step1.res2 <- mv.cml.susie.step1(exposure.ids, outcome.id2, sample.sizes)
 which, upon finishing looks like this:
 ```
 head(step1.res1)
+[1] 0.401999338 0.172905493 0.963813629 0.026442776 0.013637944 0.001762121
 
 head(step1.res2)
+[1] 1.613439e-01 5.540860e-01 4.398653e-01 5.708226e-07 1.430179e-01 6.191650e-02
 ```
 
 ### References
