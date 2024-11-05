@@ -85,3 +85,13 @@ head(step1.res1)
 
 head(step1.res2)
 ```
+
+### References
+
+[1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
+
+[2] Borges, Maria Carolina, et al. "Role of circulating polyunsaturated fatty acids on cardiovascular diseases risk: analysis using Mendelian randomization and fatty acid genetic association data from over 114,000 UK Biobank participants." BMC medicine 20.1 (2022): 1-14.
+
+[3] Bellenguez, Céline, et al. "New insights into the genetic etiology of Alzheimer’s disease and related dementias." Nature genetics 54.4 (2022): 412-436.
+
+[4] Van Der Harst, Pim, and Niek Verweij. "Identification of 64 novel genetic loci provides an expanded view on the genetic architecture of coronary artery disease." Circulation research 122.3 (2018): 433-443.
