@@ -109,7 +109,7 @@ which should suggest
 length(subset.idx)
 [1] 157
 ```
-meaning 157 exposures will be jointly analyzed in the subsequent steps.
+This means that 157 exposures will be jointly analyzed in the subsequent steps. Notice that the default used for screening is Bonferroni correction (0.05 divided by the product of number of trait and the number of exposures). Change the `cutoff` argument if you want to use something different. In this case, the cutoff is 0.05 / (2 x 249) ~ 1.0e-4.
 ### References
 
 [1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
