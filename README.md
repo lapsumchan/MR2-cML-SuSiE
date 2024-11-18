@@ -176,6 +176,10 @@ Note that by checking column sum of this submatrix, we also can learn which one 
 0.005055941 0.250410900 0.535365874
 ```
 This indicates that this set of 52 metabolite exposures are more likely to be causal to both AD and HTN, than HTN alone. 
+
+# TLDR
+Users can provide their own version of harmonized data.
+
 ### References
 
 [1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
