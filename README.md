@@ -75,8 +75,8 @@ sample.sizes <- readRDS("metdn.RDS")
 With the above four `R` objects (`exposure.ids`, `outcome.id1`, `outcome.id2` and `sample.sizes`), we are ready to run step 1 of MR2-cML-SuSiE. The function is designed such that it can be run by each trait, and each run would subsequently provide a vector of *p*-values for all 249 metabolite exposures for a given trait:
 
 ```
-step1.res1 <- mv.cml.susie.step1(exposure.ids, outcome.id1, sample.sizes)
-step1.res2 <- mv.cml.susie.step1(exposure.ids, outcome.id2, sample.sizes)
+step1.res1 <- mr2.cml.susie.step1(exposure.ids, outcome.id1, sample.sizes)
+step1.res2 <- mr2.cml.susie.step1(exposure.ids, outcome.id2, sample.sizes)
 ```
 
 which, upon finishing looks like this:
