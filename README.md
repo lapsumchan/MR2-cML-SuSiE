@@ -178,7 +178,23 @@ Note that by checking column sum of this submatrix, we also can learn which one 
 This indicates that this set of 52 metabolite exposures are more likely to be causal to both AD and HTN, than HTN alone. 
 
 # TLDR
-Users can provide their own version of harmonized data.
+Users can provide their own version of harmonized data. For step 1, we require `Q` length `L` lists of summary statistics coefficients (beta) and standard errors (se) for both the exposures and outcomes, where `Q` is the number of outcomes analyzed. This is basically providing the univariable MR (UVMR) harmonized data for each exposure (and the outcomes summary statistics corresponding to the IVs used). Notice that the set of `m` IVs should be independent (can be achieved by LD clumping), as this is a requirement for the cML framework: UVMR-cML<sup>[5]</sup>, MVMR-cML<sup>[6]</sup>, MVMR-cML-SuSiE<sup>[7]</sup> as well as our method (which builds upon on these former methods). In our case, `L = 249`. In addition, we also require `Q` vectors of length `L + 1` containing the sample sizes for each of the `L` exposures and the outcome GWAS (last element of each vector corresponds always correspond to an outcome). The `metdn.RDS` file contains sample sizes for the 249 UKB exposures, while 487511 and 484598 are the sample sizes for the AD and HTN GWAS, respectively. Below shows all 10 objects (5 per outcome) required for step 1 if the users were to provide their own data:
+
+```
+sample.sizes <- readRDS("metdn.RDS")
+sample.sizes1 <- c(sample.sizes, 487511)
+sample.sizes2 <- c(sample.sizes, 484598)
+
+beta.exposure.ls1 <- readRDS("beta.exposure.ls1.RDS")
+se.exposure.ls1 <- readRDS("se.exposure.ls1.RDS")
+beta.outcome.ls1 <- readRDS("beta.outcome.ls1.RDS")
+se.outcome.ls1 <- readRDS("se.outcome.ls1.RDS")
+
+beta.exposure.ls2 <- readRDS("beta.exposure.ls2.RDS")
+se.exposure.ls2 <- readRDS("se.exposure.ls2.RDS")
+beta.outcome.ls2 <- readRDS("beta.outcome.ls2.RDS")
+se.outcome.ls2 <- readRDS("se.outcome.ls2.RDS")
+```
 
 ### References
 
@@ -189,3 +205,10 @@ Users can provide their own version of harmonized data.
 [3] Bellenguez, Céline, et al. "New insights into the genetic etiology of Alzheimer’s disease and related dementias." Nature genetics 54.4 (2022): 412-436.
 
 [4] Dönertaş, Handan Melike, et al. "Common genetic associations between age-related diseases." Nature aging 1.4 (2021): 400-412.
+
+[5] Xue, Haoran, Xiaotong Shen, and Wei Pan. "Constrained maximum likelihood-based Mendelian randomization robust to both correlated and uncorrelated pleiotropic effects." The American Journal of Human Genetics 108.7 (2021): 1251-1269.
+
+[6] Lin, Zhaotong, Haoran Xue, and Wei Pan. "Robust multivariable Mendelian randomization based on constrained maximum likelihood." The American Journal of Human Genetics 110.4 (2023): 592-605.
+
+[7] Chan, Lap Sum, Mykhaylo M. Malakhov, and Wei Pan. "A novel multivariable Mendelian randomization framework to disentangle highly correlated exposures with application to metabolomics." The American Journal of Human Genetics 111.9 (2024): 1834-1847.
+
