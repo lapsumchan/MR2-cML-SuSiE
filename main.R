@@ -234,7 +234,7 @@ mr2.cml.susie.step2 <- function(mr2dat, outcome.idx, cutoff = 5e-8) {
 }
 
 # MVMR-cML-SuSiE
-mvmr.cml.susie.step3 <- function(mvdat, invalid.idx, theta.vec, rho.mat,
+mr2.cml.susie.step3 <- function(mvdat, invalid.idx, theta.vec, rho.mat,
                                  L = 10, max.iter = 200, tol = 1e-10) {
 
   m.star <- dim(mvdat$exposure_beta)[1]
