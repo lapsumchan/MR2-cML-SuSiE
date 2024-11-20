@@ -212,7 +212,7 @@ subset.idx <- identify.exposure.subset.idx(step1.res.list)
 sample.sizes.subset <- sample.sizes[subset.idx]
 ```
 
-The users will then need to provide a harmonized MR2 dataset, while is a list of 3 objects: `mvdat.list`, `exposure.sample.sizes and `outcome.sample.sizes`: `mvdat.list` is a length `Q` list of harmonized summary statistics, each `m.star` x `L.star` (i.e., same set of `m.star` IVs for all the outcomes), each containing a list of `exposure_beta`, `exposure_se`, `exposure_pval`, `outcome_beta` and `outcome_se`; `exposure.sample.sizes` is a length `L.star` vector coming from `sample.sizes.subset`; and `outcome.sample.sizes`, a length `Q` vector. This has been provided in the file `mr2dat.RDS` as an example and step 2 can be run using the `mr2.cml.susie.step2` function. Step 3 and 4 does not depend on OpenGWAS, so please refer back to the above README. 
+The users will then need to provide a harmonized MR2 dataset, while is a list of 3 objects: `mvdat.list`, `exposure.sample.sizes` and `outcome.sample.sizes`: `mvdat.list` is a length `Q` list of harmonized summary statistics, each `m.star` x `L.star` (i.e., same set of `m.star` IVs for all the outcomes), each containing a list of `exposure_beta`, `exposure_se`, `exposure_pval`, `outcome_beta` and `outcome_se`; `exposure.sample.sizes` is a length `L.star` vector coming from `sample.sizes.subset`; and `outcome.sample.sizes`, a length `Q` vector. This has been provided in the file `mr2dat.RDS` as an example and step 2 can be run using the `mr2.cml.susie.step2` function. Step 3 and 4 does not depend on OpenGWAS, so please refer back to the above README. 
 
 
 ### References
