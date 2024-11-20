@@ -148,13 +148,38 @@ invalid.idx <- sort(unique(c(invalid.idx1, invalid.idx2)))
 ```
 Using this set of invalid IVs, we can obtain better initial value estimates for the IMS step (step 4) via MVMR-cML-SuSiE in step 3. Notice that we also need `rho.mat` (the genetic correlation matrix between exposures and outcomes) in step 3 (more details can be found [here](https://github.com/lapsumchan/MVMR-cML-SuSiE), and this has been provided:
 ```
-rho.mat <- readRDS("metdrho.RDS")
+rho.mat <- matrix(0, 250, 250)
+rho.mat[1:249,1:249] <- readRDS("metdrho.RDS")
+rho.mat[250,250] <- 1
 
-step3.res1 <- mvmr.cml.susie.step3(step2.res1$mvdat1, invalid.idx, step2.res1$theta.vec1, rho.mat)
-step3.res2 <- mvmr.cml.susie.step3(step2.res2$mvdat2, invalid.idx, step2.res2$theta.vec2, rho.mat)
+rho.mat <- rho.mat[c(subset.idx,250),c(subset.idx,250)]
+
+invalid.idx <- sort(unique(c(step2.res1$invalid.idx, step2.res2$invalid.idx)))
+
+step3.res1 <- mr2.cml.susie.step3(step2.res1$mvdat, invalid.idx, step2.res1$theta.vec, rho.mat)
+step3.res2 <- mr2.cml.susie.step3(step2.res2$mvdat, invalid.idx, step2.res2$theta.vec, rho.mat)
 ```
 
-Finally, the IMS step can be run using the initial value provided. We can identify the significant exposures checking if the row sum of the PIP matrix (row corresponding to an exposure) is greater than 1/157:
+Finally, the IMS step can be run using the initial value provided:
+```
+theta.vec1 <- unname(coef(step3.res1))[-1]
+theta.vec2 <- unname(coef(step3.res2))[-1]
+```
+
+We need to provide `mvdat.list` (a length `Q` list of harmonized MR datasets), and `theta.vec.list` (a length `Q` list of initial value estimates for each of the corresponding outcomes):
+```
+mvdat.list <- vector("list", length = 2)
+mvdat.list[[1]] <- step2.res1$mvdat
+mvdat.list[[2]] <- step2.res2$mvdat
+
+theta.vec.list <- vector("list", length = 2)
+theta.vec.list[[1]] <- theta.vec1
+theta.vec.list[[2]] <- theta.vec2
+
+res <- mr2.cml.susie.step4(mvdat.list, invalid.idx, theta.vec.list)
+```
+
+With that, we can identify the significant exposures checking if the row sum of the PIP matrix (row corresponding to an exposure) is greater than 1/157:
 ```
 idx <- which(rowSums(res) > 1/157)
 ```
