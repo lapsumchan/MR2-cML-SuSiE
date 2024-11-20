@@ -1,7 +1,7 @@
 # MR2-cML-SuSiE
 
 ### Overview
-This repository provides a demonstration on how to use the MR2-cML-SuSiE `R` source code. Currently, the code is dependent on the OpenGWAS database<sup>[1]</sup>.
+This repository provides a demonstration on how to use the MR2-cML-SuSiE `R` source code. The default option of the code is dependent on the OpenGWAS database<sup>[1]</sup>, but users can also provide their own harmonized Mendelian randomization (MR) data (see TLDR towards the bottom of this README).
 
 # System Requirements
 
@@ -203,15 +203,17 @@ step1.res2 <- mr2.cml.susie.step2(sample.sizes = sample.sizes2, beta.exposure.ls
 ```
 with the `use.openGWAS` option specified as `FALSE`, it should same results as the OpenGWAS dependent version in the README.
 
-Based on these step 1 results, it should suggest a subset of `L.star` exposures that warrants further investigation:
+Based on these step 1 results, it should suggest a subset of `L.star` exposures (in this case, 157) that warrants further investigation:
 ```
 step1.res.list <- vector("list", length = 2)
 step1.res.list[[1]] <- step1.res1
 step1.res.list[[2]] <- step1.res2
 subset.idx <- identify.exposure.subset.idx(step1.res.list)
 sample.sizes.subset <- sample.sizes[subset.idx]
-
 ```
+
+The users will then need to provide a harmonized MR2 dataset, while is a list of 3 objects: `mvdat.list`, `exposure.sample.sizes and `outcome.sample.sizes`: `mvdat.list` is a length `Q` list of harmonized summary statistics, each `m.star` x `L.star` (i.e., same set of `m.star` IVs for all the outcomes), each containing a list of `exposure_beta`, `exposure_se`, `exposure_pval`, `outcome_beta` and `outcome_se`; `exposure.sample.sizes` is a length `L.star` vector coming from `sample.sizes.subset`; and `outcome.sample.sizes`, a length `Q` vector. This has been provided in the file `mr2dat.RDS` as an example and step 2 can be run using the `mr2.cml.susie.step2` function. Step 3 and 4 does not depend on OpenGWAS, so please refer back to the above README. 
+
 
 ### References
 
