@@ -196,6 +196,23 @@ beta.outcome.ls2 <- readRDS("beta.outcome.ls2.RDS")
 se.outcome.ls2 <- readRDS("se.outcome.ls2.RDS")
 ```
 
+After running
+```
+step1.res1 <- mr2.cml.susie.step1(sample.sizes = sample.sizes1, beta.exposure.ls = beta.exposure.ls1, se.exposure.ls = se.exposure.ls1, beta.outcome.ls = beta.outcome.ls1, se.outcome.ls = se.outcome.ls1, use.openGWAS = FALSE)
+step1.res2 <- mr2.cml.susie.step2(sample.sizes = sample.sizes2, beta.exposure.ls = beta.exposure.ls2, se.exposure.ls = se.exposure.ls2, beta.outcome.ls = beta.outcome.ls2, se.outcome.ls = se.outcome.ls2, use.openGWAS = FALSE)
+```
+with the `use.openGWAS` option specified as `FALSE`, it should same results as the OpenGWAS dependent version in the README.
+
+Based on these step 1 results, it should suggest a subset of `L.star` exposures that warrants further investigation:
+```
+step1.res.list <- vector("list", length = 2)
+step1.res.list[[1]] <- step1.res1
+step1.res.list[[2]] <- step1.res2
+subset.idx <- identify.exposure.subset.idx(step1.res.list)
+sample.sizes.subset <- sample.sizes[subset.idx]
+
+```
+
 ### References
 
 [1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
