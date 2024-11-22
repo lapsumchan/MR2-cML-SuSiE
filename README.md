@@ -200,7 +200,7 @@ Note that by checking column sum of this submatrix, we also can learn which one 
          AD         HTN      AD_HTN 
 0.005055941 0.250410900 0.535365874
 ```
-This indicates that this set of 52 metabolite exposures are more likely to be causal to both AD and HTN, than HTN alone. Depending on the actual IMS results, we can re-run UVMR-cML<sup>[5]</sup> or MVMR-cML<sup>[6]</sup> for each of the plausible models and quantify the statistical evidence for the exposure jointly contributing to both diseases. We use one of the 52 metabolites `S_VLDL_P` as an example:
+This indicates that this set of 52 metabolite exposures are more likely to be causal to both AD and HTN, than HTN alone. Depending on the actual IMS results, we can re-run UVMR-cML<sup>[5]</sup> or MVMR-cML<sup>[6]</sup> for each of the plausible models and quantify the statistical evidence for the exposure jointly contributing to both diseases. We use one of the 52 metabolites `S_VLDL_P` as an example. Since the 52 metabolites only come from a single cluster, we run UVMR-cML:
 
 ```
 exposure.dat.sub <- extract_instruments("met-d-S_VLDL_P")
