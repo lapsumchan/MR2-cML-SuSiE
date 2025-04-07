@@ -200,37 +200,7 @@ Note that by checking column sum of this submatrix, we also can learn which one 
          AD         HTN      AD_HTN 
 0.005055941 0.250410900 0.535365874
 ```
-This indicates that this set of 52 metabolite exposures are more likely to be causal to both AD and HTN, than HTN alone. Depending on the actual IMS results, we can re-run UVMR-cML<sup>[5]</sup> or MVMR-cML<sup>[6]</sup> for each of the plausible models and quantify the statistical evidence for the exposure jointly contributing to both diseases. We use one of the 52 metabolites `S_VLDL_P` as an example. Since the 52 metabolites only come from a single cluster, we run UVMR-cML:
-
-```
-exposure.dat.sub <- extract_instruments("met-d-S_VLDL_P")
-outcome.dat.sub1 <- extract_outcome_data(snps = exposure.dat.sub$SNP, outcomes = outcome.id1)
-outcome.dat.sub2 <- extract_outcome_data(snps = exposure.dat.sub$SNP, outcomes = outcome.id2)
-dat1 <- harmonise_data(exposure.dat.sub, outcome.dat.sub1)
-dat2 <- harmonise_data(exposure.dat.sub, outcome.dat.sub2)
-
-# Perform UVMR-cML
-cML.result1 <- mr_cML(dat1$beta.exposure,
-                      dat1$beta.outcome,
-                      dat1$se.exposure,
-                      dat1$se.outcome,
-                      n = n,
-                      random_start = 100,
-                      random_seed = 1)
-
-cML.result2 <- mr_cML(dat2$beta.exposure,
-                      dat2$beta.outcome,
-                      dat2$se.exposure,
-                      dat2$se.outcome,
-                      n = n,
-                      random_start = 100,
-                      random_seed = 1)
-```
-and we can combine the BIC-based *p*-values for each outcome using the Cauchy combination test:
-```
-> cauchy.pvalue(c(cML.result1$BIC_p, cML.result2$BIC_p))
-[1] 7.847029e-22
-```
+indicating this set of 52 metabolite exposures are more likely to be causal to both AD and HTN, than HTN alone. 
 
 # TLDR
 Users can provide their own version of harmonized data. For step 1, we require `Q` length `L` lists of summary statistics coefficients (beta) and standard errors (se) for both the exposures and outcomes, where `Q` is the number of outcomes analyzed. This is basically providing the univariable MR (UVMR) harmonized data for each exposure (and the outcomes summary statistics corresponding to the IVs used). Notice that the set of IVs (per exposure-outcome pair) should be independent (can be achieved by LD clumping), as this is a requirement for the cML framework: UVMR-cML<sup>[5]</sup>, MVMR-cML<sup>[6]</sup>, MVMR-cML-SuSiE<sup>[7]</sup> as well as our method (which builds upon on these former methods). In our case, `L = 249`. In addition, we also require `Q` vectors of length `L + 1` containing the sample sizes for each of the `L` exposures and the outcome GWAS (last element of each vector corresponds always correspond to an outcome). The `metdn.RDS` file contains sample sizes for the 249 UKB exposures, while 487511 and 484598 are the sample sizes for the AD and HTN GWAS, respectively. Below shows all 10 objects (5 per outcome) required for step 1 if the users were to provide their own data:
