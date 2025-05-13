@@ -15,7 +15,7 @@ Before using the MR2-cML-SuSiE source code, users should have `R` version 4.3.0 
 
 ### Installation  
 
-First, we need to install a few dependencies [`TwoSampleMR`](https://mrcieu.github.io/TwoSampleMR/), [`MRcML`](https://github.com/xue-hr/MRcML) and [`MVMRcML`](https://github.com/ZhaotongL/MVMR-cML), [`susieR`](https://github.com/stephenslab/susieR) and [`MESuSiE`](https://github.com/borangao/MESuSiE):  
+First, we need to install a few dependencies [`TwoSampleMR`](https://mrcieu.github.io/TwoSampleMR/), [`MRcML`](https://github.com/xue-hr/MRcML), [`susieR`](https://github.com/stephenslab/susieR) and [`MESuSiE`](https://github.com/borangao/MESuSiE):  
 
     install.packages("remotes")
     remotes::install_github("MRCIEU/TwoSampleMR")
@@ -24,7 +24,6 @@ First, we need to install a few dependencies [`TwoSampleMR`](https://mrcieu.gith
 
     install.packages("devtools")
     devtools::install_github("xue-hr/MRcML")
-    devtools::install_github("ZhaotongL/MVMR-cML")
     devtools::install_github("borangao/MESuSiE")
 
 # Demo
@@ -35,7 +34,6 @@ We first load all the source code dependencies:
 library(TwoSampleMR)
 library(susieR)
 library(MRcML)
-library(MVMRcML)
 library(MESuSiE)
 ```
 
