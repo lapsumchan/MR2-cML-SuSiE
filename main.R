@@ -1,11 +1,11 @@
 mr2.cml.susie.step1 <- function(exposure.ids = NULL,
-                                 outcome.id = NULL,
-                                 sample.sizes,
-                                 beta.exposure.ls = NULL,
-                                 se.exposure.ls = NULL,
-                                 beta.outcome.ls = NULL,
-                                 se.outcome.ls = NULL,
-                                 use.openGWAS = TRUE) {
+                                outcome.id = NULL,
+                                sample.sizes,
+                                beta.exposure.ls = NULL,
+                                se.exposure.ls = NULL,
+                                beta.outcome.ls = NULL,
+                                se.outcome.ls = NULL,
+                                use.openGWAS = TRUE) {
 
   # Check if OpenGWAS data extraction is required
   if (use.openGWAS) {
@@ -102,24 +102,24 @@ identify.exposure.subset.idx <- function(step1.res.list, cutoff = NULL) {
   if (is.null(step1.res.list)) {
     stop("Please provide a list of step 1 p-values (step1.res.list).")
   }
-  
+
   L <- length(step1.res.list[[1]])
-  
+
   num.traits <- length(step1.res.list)
-  
+
   # Default cutoff is Bonferroni on the number of exposures x number of traits
   if (is.null(cutoff)) {
     cutoff = 0.05 / (num.traits * L)
   }
-  
+
   # Initialize an empty vector to store indices of significant p-values
   sig.idx <- c()
-  
+
   # Loop through each element in the list to find indices of significant p-values
   for (j in 1:num.traits) {
     # Find indices in the current sublist that are less than the cutoff
     subset.idx <- which(step1.res.list[[j]] < cutoff)
-    
+
     # Append these indices to the vector of significant indices
     sig.idx <- union(sig.idx, subset.idx)
   }
@@ -129,56 +129,56 @@ identify.exposure.subset.idx <- function(step1.res.list, cutoff = NULL) {
 harmonize.mr2.data <- function(exposure.ids.subset,
                                outcome.id.list,
                                sample.sizes.subset) {
-  
+
   # Ensure exposure.ids.subset and outcome.id.list are provided
   if (is.null(exposure.ids.subset) || is.null(outcome.id.list)) {
     stop("Please provide 'exposure.ids.subset' and 'outcome.id.list' when GWAS data is not provided.")
   }
-  
+
   # Number of exposures in the subset
   L.star <- length(exposure.ids.subset)
-  
+
   # Check length of sample.sizes.subset
   if (length(sample.sizes.subset) != L.star) {
     stop("Length of 'sample.sizes.subset' must be equal to the number of exposures (L.star).")
   }
-  
+
   num.traits <- length(outcome.id.list)
-  
+
   mvdat.list <- vector("list", length = num.traits)
-  
+
   outcome.sample.sizes <- rep(NA, num.traits)
-  
+
   for (j in 1:num.traits) {
     # Get instruments jointly for the subset of exposures
     exposure.dat <- mv_extract_exposures(exposure.ids.subset)
-    
+
     # Get effects of instruments on an outcome
     outcome.dat <- extract_outcome_data(snps = exposure.dat$SNP, outcomes = outcome.id.list[[j]])
-    
+
     outcome.sample.sizes[j] <- min(outcome.dat$samplesize.outcome)
     # Harmonise the exposure and outcome data
     mvdat.list[[j]] <- mv_harmonise_data(exposure.dat, outcome.dat)
   }
   # Find common SNPs across all outcome datasets
   common.snps <- Reduce(intersect, lapply(mvdat.list, function(mvdat) rownames(mvdat$exposure_beta)))
-  
+
   # Filter each dataset to keep only common SNPs
   for (j in 1:num.traits) {
     mvdat <- mvdat.list[[j]]
-    
+
     # Get indices of common SNPs in the jth mvdat
     common.snps.idx <- match(common.snps, rownames(mvdat$exposure_beta), nomatch = 0)
-    
+
     # Filter exposure matrices and outcome arrays
     mvdat$exposure_beta <- mvdat$exposure_beta[common.snps.idx, , drop = FALSE]
     mvdat$exposure_pval <- mvdat$exposure_pval[common.snps.idx, , drop = FALSE]
     mvdat$exposure_se <- mvdat$exposure_se[common.snps.idx, , drop = FALSE]
-    
+
     mvdat$outcome_beta <- mvdat$outcome_beta[common.snps.idx]
     mvdat$outcome_pval <- mvdat$outcome_pval[common.snps.idx]
     mvdat$outcome_se <- mvdat$outcome_se[common.snps.idx]
-    
+
     # Update the list with filtered data
     mvdat.list[[j]] <- mvdat
   }
@@ -192,7 +192,7 @@ mr2.cml.susie.step2 <- function(mr2dat, outcome.idx, cutoff = 5e-8) {
   L.star <- dim(mr2dat$mvdat.list[[1]]$exposure_beta)[2]
 
   uvmr.ls <- list()
-  
+
   mvdat <- mr2dat$mvdat.list[[outcome.idx]]
 
   # Focus only on QTL for each exposure based on p-values
@@ -235,7 +235,7 @@ mr2.cml.susie.step2 <- function(mr2dat, outcome.idx, cutoff = 5e-8) {
 
 # MVMR-cML-SuSiE
 mr2.cml.susie.step3 <- function(mvdat, invalid.idx, theta.vec, rho.mat,
-                                 L = 10, max.iter = 200, tol = 1e-10) {
+                                L = 10, max.iter = 200, tol = 1e-10) {
 
   m.star <- dim(mvdat$exposure_beta)[1]
   L.star <- dim(mvdat$exposure_beta)[2]
@@ -370,19 +370,34 @@ get_posterior_mean_mesusie <- function(mesusie_object, prior_tol = 1e-9) {
   return(posterior_means)
 }
 
-mvmr.cml.susie.step4 <- function(mvdat.list, invalid.idx.list, theta.vec.list,
-                                 L = 10, max.iter = 200, tol = 1e-10) {
+mr2.cml.susie.step4 <- function(mvdat.list, invalid.idx, theta.vec.list, rho.mat,
+                                L = 10, max.iter = 200, tol = 1e-10,
+                                exposure.names = NULL, outcome.names = NULL) {
   m.star <- dim(mvdat.list[[1]]$exposure_beta)[1]
   L.star <- dim(mvdat.list[[1]]$exposure_beta)[2]
-  
+
   num.traits <- length(mvdat.list)
-  
+
+  # Optional name checks
+  if (!is.null(exposure.names)) {
+    if (length(exposure.names) != L.star) {
+      stop("Length of exposure.names (", length(exposure.names),
+           ") must match the number of exposures (", L.star, ").")
+    }
+  }
+  if (!is.null(outcome.names)) {
+    if (length(outcome.names) != num.traits) {
+      stop("Length of outcome.names (", length(outcome.names),
+           ") must match the number of outcomes (", num.traits, ").")
+    }
+  }
+
   # Initialize storage for computed values
-  X.list <- lapply(mvdat.list, function(mv) mv$exposure_beta)
+  X <- mvdat.list[[1]]$exposure_beta
   Y.list <- lapply(mvdat.list, function(mv) mv$outcome_beta)
   SigmaX.list <- lapply(mvdat.list, function(mv) mv$exposure_se)
   seY.list <- lapply(mvdat.list, function(mv) mv$outcome_se)
-  
+
   # Calculate sei.list and Sigmai.list for each trait
   sei.list <- vector("list", length = num.traits)
   Sigmai.list <- vector("list", length = num.traits)
@@ -392,78 +407,105 @@ mvmr.cml.susie.step4 <- function(mvdat.list, invalid.idx.list, theta.vec.list,
       diag(sei.list[[j]][[i]]) %*% rho.mat %*% diag(sei.list[[j]][[i]])
     })
   }
-  
+
   # Compute profile likelihood variance and transform X, Y for each trait
   new.sigma.vec.list <- vector("list", length = num.traits)
   Xnew.list <- vector("list", length = num.traits)
   Ynew.list <- vector("list", length = num.traits)
-  
-  for (j in 1:num.traits) {
-    gamma.vec <- c(theta.vec_list[[j]], -1)
-    new_sigma_vec <- sapply(1:m.star, function(i) sqrt(t(gamma.vec) %*% Sigmai.list[[j]][[i]] %*% gamma.vec))
-    Xnew.list[[j]] <- X.list[[j]] / new_sigma_vec
-    Ynew.list[[j]] <- Y.list[[j]] / new_sigma_vec
-    new.sigma.vec.list[[j]] <- new_sigma_vec
-  }
-  
-  # Process invalid indices for all traits
-  Xsub.list <- vector("list", length = num.traits)
-  Ysub.list <- vector("list", length = num.traits)
-  for (j in 1:num.traits) {
-    invalid.idx <- unique(unlist(invalid.idx.list))
-    if (length(invalid.idx) > 0) {
-      Xsub.list[[j]] <- Xnew.list[[j]][-invalid.idx, ]
-      Ysub.list[[j]] <- Ynew.list[[j]][-invalid.idx]
-    } else {
-      Xsub.list[[j]] <- Xnew.list[[j]]
-      Ysub.list[[j]] <- Ynew.list[[j]]
-    }
-  }
-  
-  # Prepare rho.list and theta.list for meSuSie_core
-  rho.list <- vector("list", length = num.traits)
-  theta.list <- vector("list", length = num.traits)
-  for (j in 1:num.traits) {
-    n <- dim(Xsub.list[[j]])[1]
-    Z <- t(Xsub.list[[j]]) %*% Ysub.list[[j]] / sqrt(n)
-    
-    XtX <- t(Xsub.list[[j]]) %*% Xsub.list[[j]]
-    rho.list[[paste0("trait", j)]] <- cov2cor(XtX)
-    
-    metab_names <- mvdat.list[[1]]$expname$id.exposure
-    theta.list[[paste0("trait", j)]] <- data.frame(
-      SNP = paste0("Metab", 1:L.star),
-      Beta = rep(0, L.star),
-      Se = rep(0.001825742, L.star),
-      Z = Z,
-      N = rep(m.star - length(invalid.idx), L.star)
-    )
-    theta.list[[paste0("trait", j)]]$Beta <- Z * theta.list[[paste0("trait", j)]]$Se
-  }
-  
-  # IMS
-  prev_theta <- matrix(NA, nrow = L.star, ncol = num.traits)
+
+  # Initial theta.mat from first fit (e.g., from mvmr.cml.susie.step3 results or initialized values)
+  theta.mat <- matrix(unlist(theta.vec.list), ncol = num.traits)
+
+  prev.theta <- theta.mat
   iter <- 0
   diff <- 1e300
   
+  # IMS
+
   while (diff > tol) {
     iter <- iter + 1
-    res <- meSuSie_core(rho.list, theta.list, L = 10)
-    theta.mat <- get_posterior_mean_mesusie(fit)
+
+    new.sigma.vec.list <- list()
+    for (j in 1:num.traits) {
+      gamma.vec <- c(theta.mat[, j], -1)
+      new.sigma.vec <- sapply(1:m.star, function(i) {
+        sqrt(t(gamma.vec) %*% Sigmai.list[[j]][[i]] %*% gamma.vec)
+      })
+      new.sigma.vec.list[[j]] <- new.sigma.vec
+    }
+
+    Xnew.list <- list()
+    Ynew.list <- list()
+    for (j in 1:num.traits) {
+      Xnew.list[[j]] <- X / new.sigma.vec.list[[j]]
+      Ynew.list[[j]] <- Y.list[[j]] / new.sigma.vec.list[[j]]
+    }
     
-    diff <- sum((prev_theta - theta.mat)^2, na.rm = TRUE)
+    # Process invalid indices for all traits
+    Xsub.list <- list()
+    Ysub.list <- list()
+    for (j in 1:num.traits) {
+      if (length(invalid.idx) > 0) {
+        Xsub.list[[j]] <- Xnew.list[[j]][-invalid.idx, ]
+        Ysub.list[[j]] <- Ynew.list[[j]][-invalid.idx]
+      } else {
+        Xsub.list[[j]] <- Xnew.list[[j]]
+        Ysub.list[[j]] <- Ynew.list[[j]]
+      }
+
+      # Standardize X and Y
+      Xsub.list[[j]] <- scale(Xsub.list[[j]])
+      Ysub.list[[j]] <- scale(Ysub.list[[j]])
+    }
+
+    rho.list <- list()
+    theta.list <- list()
+    
+    # Prepare rho.list and theta.list for meSuSie_core
+    for (j in 1:num.traits) {
+
+      # Use the outcome name if provided, else default
+      outcome.name <- if (!is.null(outcome.names)) outcome.names[j] else paste0("Outcome", j)
+
+      n <- dim(Xsub.list[[j]])[1]
+      Z <- t(Xsub.list[[j]]) %*% Ysub.list[[j]] / sqrt(n)
+
+      X_tX <- t(Xsub.list[[j]]) %*% Xsub.list[[j]]
+      rho.list[[outcome.name]] <- cov2cor(X_tX)
+
+      # Construct the SNP names based on whether exposure names are provided
+      snp.names <- if (!is.null(exposure.names)) exposure.names else paste0("Exposure", 1:L.star)
+
+      theta.list[[outcome.name]] <- data.frame(
+        SNP = paste0("Exposure", 1:L.star),
+        Beta = rep(0, L.star),
+        Se = rep(0.001825742, L.star),
+        Z = Z,
+        N = rep(m.star - length(invalid.idx), L.star)
+      )
+      theta.list[[outcome.name]]$Beta <- theta.list[[outcome.name]]$Z * theta.list[[outcome.name]]$Se
+    }
+
+    res <- meSuSie_core(rho.list, theta.list, L = 10)
+    theta.mat <- get_posterior_mean_mesusie(res)
+
+    diff <- sum((prev.theta - theta.mat)^2, na.rm = TRUE)
     if (diff > 0) {
-      prev_theta <- theta.mat
+      prev.theta <- theta.mat
     } else {
       break
     }
   }
-  return(res)
-}
 
-cauchy.pvalue.new <- function(pval) {
-  d <- length(pval)
-  T <- sum(1 / tan(pi * pval)) / d
-  pval2 <- 2 * pcauchy(-abs(T))
-  return(pval2)
+  for (l in 1:L) {
+    rownames(res$alpha[[l]]) <- snp.names
+  }
+
+  config.names <- colnames(res$pip_config)
+
+  for (l in 1:L) {
+    colnames(res$alpha[[l]]) <- config.names
+  }
+
+  return(res)
 }
