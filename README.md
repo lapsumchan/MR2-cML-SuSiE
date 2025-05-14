@@ -146,7 +146,7 @@ invalid.idx1 <- step2.res1$invalid.idx
 invalid.idx2 <- step2.res2$invalid.idx
 invalid.idx <- sort(unique(c(invalid.idx1, invalid.idx2)))
 ```
-Using this set of invalid IVs, we can obtain better initial value estimates for the IMS step (step 4) via MVMR-cML-SuSiE in step 3. Notice that we also need `rho.mat` (the genetic correlation matrix between exposures and outcomes) in step 3 (more details can be found [here](https://github.com/lapsumchan/MVMR-cML-SuSiE), and this has been provided:
+Using this set of invalid IVs, we can obtain better initial value estimates for the IMS step (step 4) via MVMR-cML-SuSiE in step 3. Notice that we also need `rho.mat` (the genetic correlation matrix between exposures and outcomes) in step 3 (more details can be found [here](https://github.com/lapsumchan/MVMR-cML-SuSiE)), and this has been provided:
 ```
 rho.mat <- matrix(0, 250, 250)
 rho.mat[1:249,1:249] <- readRDS("metdrho.RDS")
@@ -182,11 +182,11 @@ res <- mr2.cml.susie.step4(mvdat.list, invalid.idx, theta.vec.list, rho.mat,
                            exposure.names = exposure.names, outcome.names = outcome.names)
 ```
 
-With that, we can identify the significant exposures checking if the row sum of the PIP matrix (row corresponding to an exposure) is greater than 1/157:
+With that, if there are signals from a given cluster (in this case, only cluster 1), we can identify the significant exposures checking if the row sum of the PIP matrix `res$alpha[[1]]` (row corresponding to an exposure) is greater than 1/157:
 ```
 idx <- which(rowSums(res$alpha[[1]]) > 1/157)
 ```
-and the significant exposure set is given by `res[idx,]` which looks like:
+and the significant exposure set is given by `res$alpha[[1]][idx,]` which looks like:
 ```
 > head(res$alpha[[1]][idx,])
                              AD         HTN      AD_HTN
@@ -199,9 +199,9 @@ met-d-L_VLDL_CE    1.993386e-04 0.001663186 0.006012435
 ```
 Note that by checking column sum of this submatrix, we also can learn which one is the most likely configuration:
 ```
-> colSums(res[idx,])
+> colSums(res$alpha[[1]][idx,])
          AD         HTN      AD_HTN 
-0.005055941 0.250410900 0.535365874
+0.006430108 0.287627603 0.597492295
 ```
 indicating this set of 52 metabolite exposures are more likely to be causal to both AD and HTN, than HTN alone. 
 
