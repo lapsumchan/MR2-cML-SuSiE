@@ -142,6 +142,8 @@ step2.res2 <- mr2.cml.susie.step2(mr2dat, 2)
 ```
 which is also designed to be run on a per trait basis. Upon finish running, this provides `invalid.idx1` (from `step2.res1`) and `invalid.idx2` (from `step2.res2`), i.e., the instrumental variables (IVs) deemed invalid using UVMR-cML for the corresponding outcomes. We can obtain an overall set of invalid IVs by taking the union:
 ```
+invalid.idx1 <- step2.res1$invalid.idx
+invalid.idx2 <- step2.res2$invalid.idx
 invalid.idx <- sort(unique(c(invalid.idx1, invalid.idx2)))
 ```
 Using this set of invalid IVs, we can obtain better initial value estimates for the IMS step (step 4) via MVMR-cML-SuSiE in step 3. Notice that we also need `rho.mat` (the genetic correlation matrix between exposures and outcomes) in step 3 (more details can be found [here](https://github.com/lapsumchan/MVMR-cML-SuSiE), and this has been provided:
@@ -151,8 +153,6 @@ rho.mat[1:249,1:249] <- readRDS("metdrho.RDS")
 rho.mat[250,250] <- 1
 
 rho.mat <- rho.mat[c(subset.idx,250),c(subset.idx,250)]
-
-invalid.idx <- sort(unique(c(step2.res1$invalid.idx, step2.res2$invalid.idx)))
 
 step3.res1 <- mr2.cml.susie.step3(step2.res1$mvdat, invalid.idx, step2.res1$theta.vec, rho.mat)
 step3.res2 <- mr2.cml.susie.step3(step2.res2$mvdat, invalid.idx, step2.res2$theta.vec, rho.mat)
@@ -174,23 +174,28 @@ theta.vec.list <- vector("list", length = 2)
 theta.vec.list[[1]] <- theta.vec1
 theta.vec.list[[2]] <- theta.vec2
 
-res <- mr2.cml.susie.step4(mvdat.list, invalid.idx, theta.vec.list)
+exposure.names <- mvdat.list[[1]]$expname$id.exposure
+
+outcome.names <- c("AD", "HTN")
+
+res <- mr2.cml.susie.step4(mvdat.list, invalid.idx, theta.vec.list, rho.mat,
+                           exposure.names = exposure.names, outcome.names = outcome.names)
 ```
 
 With that, we can identify the significant exposures checking if the row sum of the PIP matrix (row corresponding to an exposure) is greater than 1/157:
 ```
-idx <- which(rowSums(res) > 1/157)
+idx <- which(rowSums(res$alpha[[1]]) > 1/157)
 ```
 and the significant exposure set is given by `res[idx,]` which looks like:
 ```
-> head(res[idx,])
-                          AD         HTN      AD_HTN
-met-d-IDL_TG    0.0001776506 0.002272474 0.007515827
-met-d-L_VLDL_C  0.0001741017 0.003004226 0.009922033
-met-d-L_VLDL_FC 0.0001464217 0.004703768 0.013175401
-met-d-L_VLDL_L  0.0001352467 0.005774971 0.014877285
-met-d-L_VLDL_P  0.0001412142 0.005913658 0.016024885
-met-d-L_VLDL_PL 0.0001411858 0.005783453 0.015657510
+> head(res$alpha[[1]][idx,])
+                             AD         HTN      AD_HTN
+met-d-HDL_TG       8.189329e-05 0.004489125 0.006240771
+met-d-IDL_TG       1.776506e-04 0.002272474 0.007515827
+met-d-L_HDL_TG_pct 9.342897e-05 0.003510913 0.005766816
+met-d-L_LDL_FC_pct 5.911635e-05 0.003685972 0.003294191
+met-d-L_VLDL_C     1.741017e-04 0.003004226 0.009922033
+met-d-L_VLDL_CE    1.993386e-04 0.001663186 0.006012435
 ```
 Note that by checking column sum of this submatrix, we also can learn which one is the most likely configuration:
 ```
