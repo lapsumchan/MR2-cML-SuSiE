@@ -164,7 +164,7 @@ theta.vec1 <- unname(coef(step3.res1))[-1]
 theta.vec2 <- unname(coef(step3.res2))[-1]
 ```
 
-We need to provide `mvdat.list` (a length `Q` list of harmonized MR datasets), and `theta.vec.list` (a length `Q` list of initial value estimates for each of the corresponding outcomes):
+Similar to step 3, besides `invalid.idx` and `rho.mat`, we also need to provide `mvdat.list` (a length `Q` list of harmonized MR datasets), and `theta.vec.list` (a length `Q` list of initial value estimates for each of the corresponding outcomes):
 ```
 mvdat.list <- vector("list", length = 2)
 mvdat.list[[1]] <- step2.res1$mvdat
