@@ -182,7 +182,7 @@ res <- mr2.cml.susie.step4(mvdat.list, invalid.idx, theta.vec.list, rho.mat,
                            exposure.names = exposure.names, outcome.names = outcome.names)
 ```
 
-Notice that `exposure.names` and `outcome.names` are **optional** (they allow the output PIP matrices to display readable names for each exposure and outcome, see below). With that, if there are signals from a given cluster (in this case, only cluster 1), we can identify the significant exposures checking if the row sum of the PIP matrix `res$alpha[[1]]` (row corresponding to an exposure) is greater than 1/157:
+Notice that `exposure.names` and `outcome.names` are **optional** (they allow the output PIP matrices to display readable names for each exposure and outcome as exposed to say, Exposure1 and Outcome1_Outcome2). With that, if there are signals from a given cluster (in this case, only cluster 1), we can identify the significant exposures checking if the row sum of the PIP matrix `res$alpha[[1]]` (row corresponding to an exposure) is greater than 1/157:
 ```
 idx <- which(rowSums(res$alpha[[1]]) > 1/157)
 ```
